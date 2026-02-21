@@ -4,14 +4,19 @@ import time
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # =========================
 # CONFIG
 # =========================
-NEWSDATA_API_KEY = "pub_b3e6d9c466af4587a49a8860ab9bc05d"
+
 
 EMAIL_ADDRESS = "kurdishlearner2018@gmail.com"
-APP_PASSWORD = "yyso ppbb pbls szsh"
+NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
+APP_PASSWORD = os.getenv("APP_PASSWORD")
 
 # =========================
 # Fetch Latest News
