@@ -91,4 +91,4 @@ print("bot started...")
 
 while True:
     schedule.run_pending()
-    time.sleep30
+    time.sleep(30)
