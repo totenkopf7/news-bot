@@ -6,8 +6,20 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 from dotenv import load_dotenv
+from flask import Flask
 
 load_dotenv()
+
+from flask import Flask
+
+# =========================
+# Flask App (keeps port open)
+# =========================
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "News bot running"
 
 # =========================
 # CONFIG
@@ -92,3 +104,13 @@ print("bot started...")
 while True:
     schedule.run_pending()
     time.sleep(30)
+
+
+if __name__ == "__main__":
+    from threading import Thread
+
+    # start scheduler in background
+    Thread(target=run_scheduler, daemon=True).start()
+
+    # run web server (required by Render web service)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
