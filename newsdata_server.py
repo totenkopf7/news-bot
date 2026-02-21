@@ -92,3 +92,15 @@ print("bot started...")
 while True:
     schedule.run_pending()
     time.sleep(30)
+    
+# =========================
+# Start both Flask and scheduler
+# =========================
+if __name__ == "__main__":
+    from threading import Thread
+
+    # start scheduler in background
+    Thread(target=run_scheduler, daemon=True).start()
+
+    # run web server (required by Render web service)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
