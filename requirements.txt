@@ -2,3 +2,4 @@ requests
 schedule
 dotenv
 flask
+gunicorn
