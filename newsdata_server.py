@@ -107,10 +107,5 @@ while True:
 
 
 if __name__ == "__main__":
-    from threading import Thread
-
-    # start scheduler in background
-    Thread(target=run_scheduler, daemon=True).start()
-
-    # run web server (required by Render web service)
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
