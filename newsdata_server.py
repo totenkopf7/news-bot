@@ -6,17 +6,17 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 from dotenv import load_dotenv
+from flask import Flask
+from threading import Thread
 
 load_dotenv()
 
-# =========================
-# CONFIG
-# =========================
-
+app = Flask(__name__)
 
 EMAIL_ADDRESS = "kurdishlearner2018@gmail.com"
 NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
+
 
 # =========================
 # Fetch Latest News
@@ -37,27 +37,13 @@ def get_latest_news():
         return "No news found."
 
     articles = data["results"][:5]
+    message = "Latest Iraq & Kurdistan News\n\n"
 
-    message = "Latest Iraq & Kurdistan News\n"
-    message += "=" * 40 + "\n\n"
-
-    for i, article in enumerate(articles, 1):
-        title = article.get("title", "No Title")
-        description = article.get("description", "")
-        content = article.get("content", "")
-
-        message += f"{i}. {title}\n"
-        message += "-" * 40 + "\n"
-
-        if description:
-            message += f"{description}\n\n"
-
-        if content:
-            message += f"{content}\n\n"
-
-        message += "\n" + "=" * 40 + "\n\n"
+    for article in articles:
+        message += f"{article.get('title')}\n\n"
 
     return message
+
 
 # =========================
 # Send Email
@@ -82,25 +68,29 @@ def send_email():
     except Exception as e:
         print("Error sending email:", e)
 
-# =========================
-# Schedule Every 2 Hours
-# =========================
-schedule.every(2).hours.do(send_email)
 
-print("bot started...")
-
-while True:
-    schedule.run_pending()
-    time.sleep(30)
-    
 # =========================
-# Start both Flask and scheduler
+# Scheduler Loop
+# =========================
+def run_scheduler():
+    schedule.every(2).hours.do(send_email)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(30)
+
+
+# =========================
+# Dummy Route (Required)
+# =========================
+@app.route("/")
+def home():
+    return "News bot is running!"
+
+
+# =========================
+# Start Everything
 # =========================
 if __name__ == "__main__":
-    from threading import Thread
-
-    # start scheduler in background
     Thread(target=run_scheduler, daemon=True).start()
-
-    # run web server (required by Render web service)
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
