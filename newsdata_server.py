@@ -7,32 +7,11 @@ from email.mime.multipart import MIMEMultipart
 import os
 from dotenv import load_dotenv
 from flask import Flask
-<<<<<<< HEAD
 from threading import Thread
 
 load_dotenv()
 
 app = Flask(__name__)
-=======
-
-load_dotenv()
-
-from flask import Flask
-
-# =========================
-# Flask App (keeps port open)
-# =========================
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "News bot running"
-
-# =========================
-# CONFIG
-# =========================
-
->>>>>>> de5a4a33e581ebe251f605238e280e9979f61795
 
 EMAIL_ADDRESS = "kurdishlearner2018@gmail.com"
 NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
@@ -96,7 +75,6 @@ def send_email():
 def run_scheduler():
     schedule.every(2).hours.do(send_email)
 
-<<<<<<< HEAD
     while True:
         schedule.run_pending()
         time.sleep(30)
@@ -116,13 +94,3 @@ def home():
 if __name__ == "__main__":
     Thread(target=run_scheduler, daemon=True).start()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-=======
-while True:
-    schedule.run_pending()
-    time.sleep(30)
-
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
->>>>>>> de5a4a33e581ebe251f605238e280e9979f61795
