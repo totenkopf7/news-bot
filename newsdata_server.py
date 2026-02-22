@@ -25,9 +25,8 @@ def get_latest_news():
     url = "https://newsdata.io/api/1/news"
     params = {
         "apikey": NEWSDATA_API_KEY,
-        "country": "iq",
         "language": "en",
-        "q": "Iraq OR Kurdistan"
+        "category": "world,politics,top",
     }
 
     response = requests.get(url, params=params)
@@ -38,7 +37,8 @@ def get_latest_news():
 
     articles = data["results"][:10]  # get 10 instead of 5
 
-    message = "<h2>Latest Iraq & Kurdistan News</h2><hr>"
+    message = "<h2>🌍 WORLD BREAKING NEWS 🌍</h2><hr>"
+    message += "=" * 30 + "\n\n"
 
     for i, article in enumerate(articles, 1):
         title = article.get("title", "No Title")
@@ -96,7 +96,7 @@ def send_email():
 # Scheduler Loop
 # =========================
 def run_scheduler():
-    schedule.every(2).hours.do(send_email)
+    schedule.every(3).hours.do(send_email)
 
     while True:
         schedule.run_pending()
