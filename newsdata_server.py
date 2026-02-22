@@ -36,14 +36,30 @@ def get_latest_news():
     if "results" not in data:
         return "No news found."
 
-    articles = data["results"][:5]
-    message = "Latest Iraq & Kurdistan News\n\n"
+    articles = data["results"][:10]  # get 10 instead of 5
 
-    for article in articles:
-        message += f"{article.get('title')}\n\n"
+    message = "<h2>Latest Iraq & Kurdistan News</h2><hr>"
+
+    for i, article in enumerate(articles, 1):
+        title = article.get("title", "No Title")
+        description = article.get("description", "")
+        content = article.get("content", "")
+        link = article.get("link", "")
+
+        message += f"<h3>{i}. {title}</h3>"
+
+        if description:
+            message += f"<p><b>Description:</b> {description}</p>"
+
+        if content:
+            message += f"<p>{content}</p>"
+
+        if link:
+            message += f'<p><a href="{link}">Read full article</a></p>'
+
+        message += "<hr>"
 
     return message
-
 
 # =========================
 # Send Email
@@ -51,12 +67,19 @@ def get_latest_news():
 def send_email():
     news_content = get_latest_news()
 
-    msg = MIMEMultipart()
+    msg = MIMEMultipart("alternative")
     msg["From"] = EMAIL_ADDRESS
     msg["To"] = EMAIL_ADDRESS
     msg["Subject"] = "Iraq & Kurdistan News Update"
 
-    msg.attach(MIMEText(news_content, "html"))
+    # Plain fallback version
+    plain_text = "Latest Iraq & Kurdistan News\n\nVisit links to read full articles."
+
+    part1 = MIMEText(plain_text, "plain")
+    part2 = MIMEText(news_content, "html")
+
+    msg.attach(part1)
+    msg.attach(part2)
 
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -88,9 +111,9 @@ def home():
     return "News bot is running!"
 
 
+Thread(target=run_scheduler, daemon=True).start()
 # =========================
 # Start Everything
 # =========================
 if __name__ == "__main__":
-    Thread(target=run_scheduler, daemon=True).start()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
