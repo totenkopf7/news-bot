@@ -26,7 +26,7 @@ def get_latest_news():
     params = {
         "apikey": NEWSDATA_API_KEY,
         "language": "en",
-        "category": "world,politics,top",
+        "category": "top",
     }
 
     response = requests.get(url, params=params)
@@ -70,7 +70,7 @@ def send_email():
     msg = MIMEMultipart("alternative")
     msg["From"] = EMAIL_ADDRESS
     msg["To"] = EMAIL_ADDRESS
-    msg["Subject"] = "Iraq & Kurdistan News Update"
+    msg["Subject"] = "World News [top 10]"
 
     # Plain fallback version
     plain_text = "Latest Iraq & Kurdistan News\n\nVisit links to read full articles."
@@ -96,11 +96,11 @@ def send_email():
 # Scheduler Loop
 # =========================
 def run_scheduler():
-    schedule.every(3).hours.do(send_email)
+    schedule.every(3).seconds.do(send_email)
 
     while True:
         schedule.run_pending()
-        time.sleep(30)
+        time.sleep(1)
 
 
 # =========================
@@ -111,7 +111,14 @@ def home():
     return "News bot is running!"
 
 
-Thread(target=run_scheduler, daemon=True).start()
+def start_scheduler():
+    thread = Thread(target=run_scheduler)
+    thread.daemon = True
+    thread.start()
+
+@app.before_first_request
+def initialize():
+    start_scheduler()
 # =========================
 # Start Everything
 # =========================
