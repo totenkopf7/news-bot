@@ -111,14 +111,10 @@ def home():
     return "News bot is running!"
 
 
-def start_scheduler():
+if os.environ.get("RUN_MAIN") == "true" or not os.environ.get("WERKZEUG_RUN_MAIN"):
     thread = Thread(target=run_scheduler)
     thread.daemon = True
     thread.start()
-
-@app.before_first_request
-def initialize():
-    start_scheduler()
 # =========================
 # Start Everything
 # =========================
